@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контактная форма</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .checkbox-group a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>📋 Заполните форму для получения информации</h1>
+        
+        <div id="message" class="message"></div>
+
+        <form id="contactForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Имя *</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Фамилия *</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="position">Выберите позицию *</label>
+                    <select id="position" name="position" required>
+                        <option value="">Выберите позицию</option>
+                        <option value="Clinic Owner">Владелец клиники</option>
+                        <option value="Laboratory Owner / Dental Technician">Владелец лаборатории / Зубной техник</option>
+                        <option value="Self-employed dentist">Самозанятый стоматолог</option>
+                        <option value="Buyer">Покупатель</option>
+                        <option value="Dealer">Дилер</option>
+                        <option value="Agent">Агент</option>
+                        <option value="Other">Другое</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">Город *</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="province">Область/Регион</label>
+                    <input type="text" id="province" name="province">
+                </div>
+                <div class="form-group">
+                    <label for="country">Страна</label>
+                    <input type="text" id="country" name="country">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="message">Сообщение</label>
+                <textarea id="message" name="message" placeholder="Расскажите, чем мы можем помочь..."></textarea>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="contactDays">Дни и время для связи</label>
+                <input type="text" id="contactDays" name="contactDays" placeholder="Например: Пн-Пт, 9:00-18:00">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="privacyAccepted" name="privacyAccepted" required>
+                <label for="privacyAccepted">
+                    Я прочитал и принимаю <a href="#" target="_blank">политику конфиденциальности</a> 
+                    в отношении обработки моих персональных данных. *
+                </label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="newsletterConsent" name="newsletterConsent">
+                <label for="newsletterConsent">
+                    Я согласен на обработку моих персональных данных для целей рассылки новостей 
+                    и коммерческих/рекламных сообщений.
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Отправить заявку
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/contact-forms';
+        const form = document.getElementById('contactForm');
+        const messageDiv = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Отключаем кнопку
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+
+            // Собираем данные
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                position: document.getElementById('position').value,
+                city: document.getElementById('city').value,
+                province: document.getElementById('province').value,
+                country: document.getElementById('country').value,
+                message: document.getElementById('message').value,
+                contactDays: document.getElementById('contactDays').value,
+                privacyAccepted: document.getElementById('privacyAccepted').checked,
+                newsletterConsent: document.getElementById('newsletterConsent').checked
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Спасибо! Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.', 'success');
+                    form.reset();
+                } else {
+                    showMessage('Ошибка при отправке заявки. Пожалуйста, попробуйте снова.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Ошибка соединения. Проверьте подключение к интернету и попробуйте снова.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить заявку';
+            }
+        });
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type} show`;
+            
+            // Прокрутка к сообщению
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Скрыть через 10 секунд
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 10000);
+        }
+    </script>
+</body>
+</html>

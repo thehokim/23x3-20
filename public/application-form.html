@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма заявки на работу</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #11998e;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-btn {
+            padding: 12px 20px;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .file-upload-btn:hover {
+            background: #e8e8e8;
+            border-color: #11998e;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .file-name.has-file {
+            color: #11998e;
+            font-weight: 500;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .checkbox-group a {
+            color: #11998e;
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .file-requirements {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>💼 Заявка на работу</h1>
+        <p class="subtitle">Заполните форму, чтобы присоединиться к нашей команде</p>
+        
+        <div id="message" class="message"></div>
+
+        <form id="applicationForm" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Имя *</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Фамилия *</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Телефон *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="applicationPosition">Позиция *</label>
+                    <select id="applicationPosition" name="applicationPosition" required>
+                        <option value="">Выберите позицию</option>
+                        <option value="Implantologists Speakers">Implantologists Speakers</option>
+                        <option value="Italy/Abroad Agents">Italy/Abroad Agents</option>
+                        <option value="Dealer-Distributors Italy/Abroad">Dealer-Distributors Italy/Abroad</option>
+                        <option value="Other">Другое</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contactHours">Удобное время для связи</label>
+                    <input type="text" id="contactHours" name="contactHours" placeholder="Например: 10:00-18:00">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="message">Сопроводительное письмо</label>
+                <textarea id="message" name="message" placeholder="Расскажите о себе и почему вы хотите работать с нами..."></textarea>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="cv">Загрузите ваше CV *</label>
+                <div class="file-upload">
+                    <label for="cv" class="file-upload-btn">
+                        <span id="fileUploadText">📎 Выберите файл или перетащите сюда</span>
+                    </label>
+                    <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
+                    <div id="fileName" class="file-name">Файл не выбран</div>
+                    <div class="file-requirements">Форматы: PDF, DOC, DOCX. Максимальный размер: 5 МБ</div>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="privacyAccepted" name="privacyAccepted" required>
+                <label for="privacyAccepted">
+                    Я заявляю, что прочитал <a href="#" target="_blank">Политику конфиденциальности</a> 
+                    и даю согласие на обработку персональных данных в соответствии со статьями 13-14 
+                    GDPR "2016/679". *
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Отправить заявку
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/application-forms';
+        const form = document.getElementById('applicationForm');
+        const messageDiv = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+        const fileInput = document.getElementById('cv');
+        const fileName = document.getElementById('fileName');
+
+        // Обработка выбора файла
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                
+                // Проверка размера
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage('Файл слишком большой. Максимальный размер: 5 МБ', 'error');
+                    this.value = '';
+                    fileName.textContent = 'Файл не выбран';
+                    fileName.classList.remove('has-file');
+                    return;
+                }
+                
+                fileName.textContent = `✓ ${file.name} (${sizeMB} МБ)`;
+                fileName.classList.add('has-file');
+            } else {
+                fileName.textContent = 'Файл не выбран';
+                fileName.classList.remove('has-file');
+            }
+        });
+
+        // Drag and drop
+        const fileUploadBtn = document.querySelector('.file-upload-btn');
+        
+        fileUploadBtn.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadBtn.style.borderColor = '#11998e';
+            fileUploadBtn.style.background = '#f0fff0';
+        });
+
+        fileUploadBtn.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            fileUploadBtn.style.borderColor = '#ccc';
+            fileUploadBtn.style.background = '#f0f0f0';
+        });
+
+        fileUploadBtn.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadBtn.style.borderColor = '#ccc';
+            fileUploadBtn.style.background = '#f0f0f0';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Проверка файла
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showMessage('Пожалуйста, загрузите ваше CV', 'error');
+                return;
+            }
+
+            // Отключаем кнопку
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+
+            // Создаем FormData
+            const formData = new FormData();
+            formData.append('firstName', document.getElementById('firstName').value);
+            formData.append('lastName', document.getElementById('lastName').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('applicationPosition', document.getElementById('applicationPosition').value);
+            formData.append('contactHours', document.getElementById('contactHours').value);
+            formData.append('message', document.getElementById('message').value);
+            formData.append('privacyAccepted', document.getElementById('privacyAccepted').checked);
+            formData.append('cv', fileInput.files[0]);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Спасибо! Ваша заявка успешно отправлена. Мы рассмотрим ваше CV и свяжемся с вами в ближайшее время.', 'success');
+                    form.reset();
+                    fileName.textContent = 'Файл не выбран';
+                    fileName.classList.remove('has-file');
+                } else {
+                    showMessage('Ошибка при отправке заявки. Пожалуйста, попробуйте снова.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Ошибка соединения. Проверьте подключение к интернету и попробуйте снова.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить заявку';
+            }
+        });
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type} show`;
+            
+            // Прокрутка к сообщению
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Скрыть через 10 секунд
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 10000);
+        }
+    </script>
+</body>
+</html>
