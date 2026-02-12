@@ -108,7 +108,7 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT || 22 }}
           script: |
             mkdir -p /opt/dental-forms-api
-            echo "Deployment directory /opt/dental-forms-api is ready"
+            echo "Deployment directory ready"
 
       - name: Copy docker-compose.yml to server
         uses: appleboy/scp-action@v0.1.7
@@ -118,8 +118,10 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT || 22 }}
           source: "docker-compose.yml"
-          target: "/opt/dental-forms-api/docker-compose.yml"
+          target: "/opt/dental-forms-api"   #
           strip_components: 0
+          debug: true
+          overwrite: true
 
       - name: Deploy with docker compose
         uses: appleboy/ssh-action@v1.0.3
@@ -130,39 +132,32 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT || 22 }}
           debug: true
           script: |
-            # Fix PATH for non-interactive SSH sessions (common issue)
             export PATH="$PATH:/usr/bin:/usr/local/bin:/usr/libexec/docker/cli-plugins:/snap/bin"
             
-            cd /opt/dental-forms-api || { echo "Cannot cd to /opt/dental-forms-api"; exit 1; }
+            cd /opt/dental-forms-api || { echo "Cannot cd"; exit 1; }
             pwd
             ls -la
             
-            echo "Current PATH: $PATH"
-            which docker || echo "docker command not found!"
-            docker compose version || { echo "ERROR: docker compose not found even after PATH fix!"; exit 1; }
+            echo "PATH: $PATH"
+            docker compose version || { echo "docker compose missing!"; exit 1; }
             
-            echo "Validating compose file..."
-            docker compose config || { echo "Compose file is invalid!"; exit 1; }
+            docker compose config || { echo "Invalid compose file"; exit 1; }
             
-            echo "Pulling latest images..."
-            docker compose pull || echo "Some images failed to pull (continuing...)"
+            docker compose pull || echo "Pull warnings ok"
+            docker compose up -d --force-recreate --remove-orphans || { echo "up failed"; exit 1; }
             
-            echo "Starting / restarting services..."
-            docker compose up -d --force-recreate --remove-orphans || { echo "docker compose up failed!"; exit 1; }
-            
-            echo "Cleaning up old dangling images..."
             docker image prune -f --filter "dangling=true"
             
-            echo "Deployment finished. Current containers:"
+            echo "Containers:"
             docker ps -a
             
-            echo "Last 20 lines of api service logs:"
-            docker compose logs --tail=20 api || echo "No logs available yet"
+            echo "API logs tail:"
+            docker compose logs --tail=20 api || echo "No logs"
 
-      - name: Notify deployment success
+      - name: Notify success
         if: success()
-        run: echo "Deployment to production was successful!"
+        run: echo "Deployment successful!"
 
-      - name: Notify deployment failure
+      - name: Notify failure
         if: failure()
-        run: echo "Deployment failed - check the logs above!"
+        run: echo "Deployment failed - check logs!"
