@@ -20,14 +20,14 @@ services:
       start_period: 40s
 
   api:
-    image: ${DOCKERHUB_USERNAME:-YOUR_REAL_DOCKERHUB_USERNAME}/dental-forms-api:${TAG:-latest}
+    image: thehokim/dental-forms-api:${TAG:-latest}
     container_name: dental-forms-api
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-3000}:3000"          # ← changed PORT → APP_PORT to avoid confusion with internal PORT
+      - "${APP_PORT:-3000}:3000"
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-      PORT: 3000                          # internal port — always 3000
+      PORT: 3000
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password123}@mongodb:27017/dental_forms?authSource=admin
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
