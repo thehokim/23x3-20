@@ -91,15 +91,6 @@ jobs:
           cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache
           cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache,mode=max
 
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ env.DOCKER_IMAGE }}
-          readme-filepath: ./README.md
-          short-description: "Dental Forms API with AdminJS and Telegram notifications"
-
   # Job 3: Деплой
   deploy:
     name: Deploy to Production
