@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # MongoDB
   mongodb:
     image: mongo:7
     container_name: dental-forms-mongodb
@@ -22,26 +19,23 @@ services:
       retries: 5
       start_period: 40s
 
-  # API Application
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-YOUR_REAL_DOCKERHUB_USERNAME}/dental-forms-api:${TAG:-latest}
     container_name: dental-forms-api
     restart: unless-stopped
     ports:
-      - "${PORT:-3000}:3000"
+      - "${APP_PORT:-3000}:3000"          # ← changed PORT → APP_PORT to avoid confusion with internal PORT
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-      PORT: 3000
+      PORT: 3000                          # internal port — always 3000
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password123}@mongodb:27017/dental_forms?authSource=admin
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
-      ADMIN_COOKIE_SECRET: ${ADMIN_COOKIE_SECRET:-change-this-secret}
-      SESSION_SECRET: ${SESSION_SECRET:-change-this-secret-too}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_COOKIE_SECRET: ${ADMIN_COOKIE_SECRET}
+      SESSION_SECRET: ${SESSION_SECRET}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     volumes:
       - uploads_data:/app/uploads
     depends_on:
@@ -56,32 +50,10 @@ services:
       retries: 3
       start_period: 40s
 
-  # Nginx (опционально, для production)
-  nginx:
-    image: nginx:alpine
-    container_name: dental-forms-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - api
-    networks:
-      - dental-network
-    profiles:
-      - production
-
 volumes:
   mongodb_data:
-    driver: local
   mongodb_config:
-    driver: local
   uploads_data:
-    driver: local
 
 networks:
   dental-network:
-    driver: bridge
